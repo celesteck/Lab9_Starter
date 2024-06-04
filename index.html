@@ -102,6 +102,65 @@
 
     // Start your code here
     // You may move this JS to another file if you wish
+
+    //error-btns
+    errorBtns.forEach(button => {
+      button.addEventListener('click', () => {
+        let action = button.innerText.split(' ').join('').toLowerCase(); 
+        if (action.startsWith('console')) {
+          let method = action.replace('console', '');
+          if (console[method]) {
+            console[method]('Testing ' + method);
+          }
+        } 
+        else if (action === 'starttimer') {
+          console.time('Timer');
+        } 
+        else if (action === 'endtimer') {
+          console.timeEnd('Timer');
+        } 
+        else if (action === 'triggeraglobalerror') {
+          throw new Error('This is a global error');
+        }
+      });
+    });
+
+    //3
+    document.querySelector('button:contains("Console Error")').addEventListener('click', () => {
+      try {
+        throw new Error('This is a custom error');
+      } catch (error) {
+        console.error('Caught an error:', error);
+      }
+    });
+
+    //4
+    class CustomError extends Error {
+      constructor(message) {
+        super(message);
+        this.name = 'CustomError';
+      }
+    }
+
+    document.querySelector('button:contains("Throw Custom Error")').addEventListener('click', () => {
+      throw new CustomError('This is a custom error');
+    });
+
+    //5
+    window.onerror = function(message, source, lineno, colno, error) {
+      console.error('Global error caught:', { message, source, lineno, colno, error });
+      
+      fetch('https://your-error-tracking-service.com/log', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message, source, lineno, colno, error })
+      });
+    };
+    document.querySelector('button:contains("Trigger a Global Error")').addEventListener('click', () => {
+      throw new Error('This is a triggered global error');
+    });
   </script>
 </body>
 
